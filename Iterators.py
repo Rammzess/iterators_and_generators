@@ -8,23 +8,27 @@ nest_list = [
 
 # Вариант 1
 # итератор
-final_list = []
-class NestListIterator:
+class FlatListIterator:
 
-    def __init__(self, start, end, nest_list):
-        self.nest_list = nest_list
-        self.start = start
-        self.end = end
+    def __init__(self, some_list):
+        self.main_list = some_list
 
     def __iter__(self):
-        self.start = -1
+        self.cursor = -0
+        self.inner_cursor = -1
         return self
-    
+
     def __next__(self):
-        self.start += 1
-        if self.start == self.end:
+        self.inner_cursor += 1
+
+        if self.inner_cursor == len(self.main_list[self.cursor]):
+            self.cursor += 1
+            self.inner_cursor = 0
+
+        if self.cursor == (len(self.main_list)):
             raise StopIteration
-        return self.nest_list[self.start]
+
+        return self.main_list[self.cursor][self.inner_cursor]
 
 # генератор
 def list_of_lists(nest_list):
@@ -46,18 +50,15 @@ def lists_list(nest_list):
 
 # Вызов
 if __name__ == '__main__':
-    #итератор - в список
-    for item in NestListIterator(1, len(nest_list), nest_list):
-        for item_1 in NestListIterator(1, len(item), item):
-            final_list.append(item_1)
-        print(final_list)
+    new_flatlist = [item for item in FlatListIterator(nest_list)]
+    print(new_flatlist)
 
     #генератор - в список
     flat_list = [item for item in list_of_lists(nest_list)]
     print(flat_list)
-    
+
     #функция с вызовом внутри себя и разбирает любую вложенность
-    print(lists_list(nest_list)) 
-    
+    print(lists_list(nest_list))
+
     # Вариант 3 с помощью библиотеки, любая вложенность
     print(list(matplotlib.cbook.flatten(nest_list)))
